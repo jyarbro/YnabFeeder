@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git Files", "Git Files", "{
 		.git\config = .git\config
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YNAB.SDK", "ynab-sdk\YNAB.SDK\YNAB.SDK.csproj", "{99AF0F9C-DF43-413A-93F8-588443C570B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YnabApi", "ynab-sdk\YNAB.SDK\YnabApi.csproj", "{99AF0F9C-DF43-413A-93F8-588443C570B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
