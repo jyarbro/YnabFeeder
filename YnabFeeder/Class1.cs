@@ -17,12 +17,13 @@ namespace YnabFeeder {
 
         public async Task Test() {
             foreach (var bank in Options.Banks) {
-                var connection = new ConnectionDetails();
-                connection.HbciVersion = 300;
-                connection.Blz = bank.Blz;
-                connection.UserId = bank.UserId;
-                connection.Pin = bank.Pin;
-                connection.Url = bank.Endpoint;
+                var connection = new ConnectionDetails {
+                    HbciVersion = 300,
+                    Blz = bank.Blz,
+                    UserId = bank.UserId,
+                    Pin = bank.Pin,
+                    Url = bank.Endpoint
+                };
 
                 var client = new FinTsClient(connection);
 
