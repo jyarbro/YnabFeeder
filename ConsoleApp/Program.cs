@@ -1,15 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using YnabFeeder;
 using YnabFeeder.Common;
 
 Console.CancelKeyPress += ConsoleCancelKeyPress;
 
 var services = ConfigureServices();
 
-var test = services.BuildServiceProvider().GetService<YnabFeeder.Class1>();
+var test = services.BuildServiceProvider().GetService<YnabFeederClient>();
 
-await test.Test();
+await test.Run();
 
 
 static ServiceCollection ConfigureServices() {
@@ -31,7 +32,7 @@ static ServiceCollection ConfigureServices() {
 
     services.AddScoped<IConfiguration>((services) => configuration);
 
-    services.AddScoped<YnabFeeder.Class1>();
+    services.AddScoped<YnabFeeder.YnabFeederClient>();
 
     return services;
 }
