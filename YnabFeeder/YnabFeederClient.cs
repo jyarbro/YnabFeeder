@@ -4,9 +4,11 @@ using libfintx.Swift;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using YnabFeeder.Common;
 using YnabFeeder.Common.Models;
+using YnabFeeder.Common.Utilities;
 
 namespace YnabFeeder {
     public class YnabFeederClient {
@@ -22,24 +24,15 @@ namespace YnabFeeder {
         }
 
         public async Task Run() {
-            foreach (var bank in Options.Banks) {
-                OpenBankConnection(bank);
+            OpenBankConnection(Options.Banks.First());
 
-                var accounts = await GetAccounts();
+            var accounts = await GetAccounts();
+            var transactions = await GetTransactions(accounts.First());
 
-                foreach (var account in accounts) {
-                    var transactions = await GetTransactions(account);
-
-                    foreach (var transaction in transactions) {
-                        if (!transaction.Pending) {
-                            // ... do something ...
-                        }
-                    }
-                }
-            }
+            FileStorage.WriteToJsonFile(Options.FilePath, transactions);
         }
 
-        public void OpenBankConnection(Bank bankDetails) {
+        void OpenBankConnection(Bank bankDetails) {
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Opening Connection");
 
@@ -64,7 +57,7 @@ namespace YnabFeeder {
             });
         }
 
-        public async Task<List<AccountInformation>> GetAccounts() {
+        async Task<List<AccountInformation>> GetAccounts() {
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Getting accounts");
             
@@ -79,7 +72,7 @@ namespace YnabFeeder {
             return result.Data;
         }
 
-        public async Task<List<SwiftStatement>> GetTransactions(AccountInformation account) {
+        async Task<List<SwiftStatement>> GetTransactions(AccountInformation account) {
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Getting transactions");
 
