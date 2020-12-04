@@ -10,7 +10,7 @@ var services = ConfigureServices();
 
 var test = services.BuildServiceProvider().GetService<TestClient_ProcessTransactions>();
 
-test.Run();
+await test.Run();
 
 
 static ServiceCollection ConfigureServices() {
