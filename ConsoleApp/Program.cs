@@ -1,19 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using YnabFeeder;
 using YnabFeeder.Common;
-using YnabFeeder.Common.Utilities;
 
 Console.CancelKeyPress += ConsoleCancelKeyPress;
 
 var services = ConfigureServices();
 
-var test = services.BuildServiceProvider().GetService<IOptions<FintsOptions>>();
-var options = test.Value;
+var test = services.BuildServiceProvider().GetService<YnabFeederClient>();
 
-FileStorage.WriteToJsonFile(options.FilePath + "\\testfile.json", options);
+await test.Run();
 
 
 static ServiceCollection ConfigureServices() {

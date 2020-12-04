@@ -29,7 +29,7 @@ namespace YnabFeeder {
             var accounts = await GetAccounts();
             var transactions = await GetTransactions(accounts.First());
 
-            FileStorage.WriteToJsonFile(Options.FilePath, transactions);
+            FileStorage.WriteToJsonFile($"{Options.FilePath}\\transactions.json", transactions);
         }
 
         void OpenBankConnection(Bank bankDetails) {
@@ -37,7 +37,6 @@ namespace YnabFeeder {
             Console.WriteLine("Opening Connection");
 
             var connection = new ConnectionDetails {
-                HbciVersion = 300,
                 Blz = bankDetails.Blz,
                 UserId = bankDetails.UserId,
                 Pin = bankDetails.Pin,
@@ -73,10 +72,12 @@ namespace YnabFeeder {
         }
 
         async Task<List<SwiftStatement>> GetTransactions(AccountInformation account) {
+            FintsClient.ConnectionDetails.Account = account.AccountNumber;
+
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Getting transactions");
 
-            var result = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-28), DateTime.Today);
+            var result = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-10), DateTime.Today, saveMt940File: true);
 
             Console.WriteLine($"{nameof(FintsClient.Accounts)} messages:");
 
