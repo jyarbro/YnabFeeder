@@ -8,9 +8,9 @@ Console.CancelKeyPress += ConsoleCancelKeyPress;
 
 var services = ConfigureServices();
 
-var test = services.BuildServiceProvider().GetService<YnabFeederClient>();
+var test = services.BuildServiceProvider().GetService<TestClient_ProcessTransactions>();
 
-await test.Run();
+test.Run();
 
 
 static ServiceCollection ConfigureServices() {
@@ -32,7 +32,7 @@ static ServiceCollection ConfigureServices() {
 
     services.AddScoped<IConfiguration>((services) => configuration);
 
-    services.AddScoped<YnabFeederClient>();
+    services.AddScoped<TestClient_ProcessTransactions>();
 
     return services;
 }
