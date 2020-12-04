@@ -2,7 +2,12 @@
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using YNAB.SDK;
+using YNAB.SDK.Api;
+using YNAB.SDK.Client;
+using YNAB.SDK.Model;
 using YnabFeeder.Common;
 using YnabFeeder.Common.Utilities;
 
@@ -11,7 +16,8 @@ namespace YnabFeeder {
         readonly FintsOptions FintsOptions;
         readonly YnabOptions YnabOptions;
 
-        YNAB.SDK.API Client { get; set; }
+        API Client { get; set; }
+        BudgetDetail Budget { get; set; }
 
         public TestClient_ProcessTransactions(
             IOptions<FintsOptions> fintsOptions,
@@ -23,19 +29,30 @@ namespace YnabFeeder {
 
         public async Task Run() {
             OpenConnection();
-            await ListBudgets();
+            await TestTransaction();
         }
 
         void OpenConnection() {
-            Client = new YNAB.SDK.API(YnabOptions.AccessToken);
+            Client = new API(YnabOptions.AccessToken);
+            Budget = Client.Budgets.GetBudgetById(YnabOptions.BudgetId).Data.Budget;
         }
 
-        async Task ListBudgets() {
-            var budgetsResponse = await Client.Budgets.GetBudgetsAsync();
+        async Task TestTransaction() {
+            var payee = Budget.Payees[4];
 
-            budgetsResponse.Data.Budgets.ForEach(budget => {
-                Console.WriteLine($"Budget Name: {budget.Name}");
-            });
+            var transaction = new SaveTransaction {
+                AccountId = Budget.Accounts.First().Id,
+                Amount = 100L,
+                Date = DateTime.Now,
+                PayeeId = payee.Id,
+                PayeeName = payee.Name,
+                CategoryId = Budget.Categories.First().Id,
+                Memo = "Test Transaction",
+                Approved = true,
+                Cleared = SaveTransaction.ClearedEnum.Cleared
+            };
+
+            await Client.Transactions.CreateTransactionAsync(YnabOptions.BudgetId, new SaveTransactionsWrapper(transaction));
         }
     }
 }
