@@ -11,13 +11,13 @@ using YnabFeeder.Common.Models;
 using YnabFeeder.Common.Utilities;
 
 namespace YnabFeeder {
-    public class YnabFeederClient {
+    public class TestClient_GetTransactions {
         readonly FintsOptions Options;
 
         FinTsClient FintsClient { get; set; }
         TANDialog Dialog { get; set; }
 
-        public YnabFeederClient(
+        public TestClient_GetTransactions(
             IOptions<FintsOptions> options
         ) {
             Options = options.Value;
