@@ -2,13 +2,13 @@
 using libfintx.Data;
 using libfintx.Swift;
 using Microsoft.Extensions.Options;
+using Nrrdio.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YnabFeeder.Common;
 using YnabFeeder.Common.Models;
-using YnabFeeder.Common.Utilities;
 
 namespace YnabFeeder {
     public class TestClient_GetTransactions {
@@ -29,7 +29,7 @@ namespace YnabFeeder {
             var accounts = await GetAccounts();
             var transactions = await GetTransactions(accounts.First());
 
-            FileStorage.WriteToJsonFile($"{Options.FilePath}\\transactions.json", transactions);
+            JsonFiles.WriteToJsonFile($"{Options.FilePath}\\transactions.json", transactions);
         }
 
         void OpenBankConnection(Bank bankDetails) {
@@ -59,7 +59,7 @@ namespace YnabFeeder {
         async Task<List<AccountInformation>> GetAccounts() {
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Getting accounts");
-            
+
             var result = await FintsClient.Accounts(Dialog);
 
             Console.WriteLine($"{nameof(FintsClient.Accounts)} messages:");
@@ -77,7 +77,7 @@ namespace YnabFeeder {
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Getting transactions");
 
-            var result = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-10), DateTime.Today, saveMt940File: true);
+            var result = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-1), DateTime.Today, saveMt940File: true);
 
             Console.WriteLine($"{nameof(FintsClient.Accounts)} messages:");
 
