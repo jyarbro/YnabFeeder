@@ -8,8 +8,10 @@ Console.CancelKeyPress += ConsoleCancelKeyPress;
 
 var services = ConfigureServices();
 
-var test = services.BuildServiceProvider().GetService<TestClient_ProcessTransactions>();
+//var test = services.BuildServiceProvider().GetService<TestClient_GetTransactions>();
+//await test.Run();
 
+var test = services.BuildServiceProvider().GetService<TestClient_ProcessTransactions>();
 await test.Run();
 
 
@@ -32,6 +34,7 @@ static ServiceCollection ConfigureServices() {
 
     services.AddScoped<IConfiguration>((services) => configuration);
 
+    services.AddScoped<TestClient_GetTransactions>();
     services.AddScoped<TestClient_ProcessTransactions>();
 
     return services;
