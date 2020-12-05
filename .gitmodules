@@ -4,3 +4,6 @@
 [submodule "libfintx"]
 	path = libfintx
 	url = https://github.com/jyarbro/libfintx.git
+[submodule "Nrrdio.Utilities"]
+	path = Nrrdio.Utilities
+	url = https://github.com/jyarbro/Nrrdio.Utilities.git
