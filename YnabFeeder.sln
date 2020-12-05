@@ -14,11 +14,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libfintx", "libfintx\src\li
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YNAB.SDK", "ynab-sdk\YNAB.SDK\YNAB.SDK.csproj", "{48DE35D7-5615-4B16-97CA-68E900673999}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nrrdio.Utilities", "Nrrdio.Utilities\Nrrdio.Utilities\Nrrdio.Utilities.csproj", "{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nrrdio.YnabClient", "Nrrdio.YnabClient\Nrrdio.YnabClient.csproj", "{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nrrdio.YnabConsole", "Nrrdio.YnabConsole\Nrrdio.YnabConsole.csproj", "{043B252C-A21C-4495-B94A-C68594CABC23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nrrdio.YnabConsole", "Nrrdio.YnabConsole\Nrrdio.YnabConsole.csproj", "{043B252C-A21C-4495-B94A-C68594CABC23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +32,6 @@ Global
 		{48DE35D7-5615-4B16-97CA-68E900673999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48DE35D7-5615-4B16-97CA-68E900673999}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48DE35D7-5615-4B16-97CA-68E900673999}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
