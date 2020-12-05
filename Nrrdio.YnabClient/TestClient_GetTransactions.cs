@@ -3,12 +3,11 @@ using libfintx.Data;
 using libfintx.Swift;
 using Microsoft.Extensions.Options;
 using Nrrdio.Utilities;
+using Nrrdio.YnabClient.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YnabFeeder.Common;
-using YnabFeeder.Common.Models;
 
 namespace YnabFeeder {
     public class TestClient_GetTransactions {
@@ -32,7 +31,7 @@ namespace YnabFeeder {
             JsonFiles.WriteToJsonFile($"{Options.FilePath}\\transactions.json", transactions);
         }
 
-        void OpenBankConnection(Bank bankDetails) {
+        void OpenBankConnection(BankOptions bankDetails) {
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Opening Connection");
 

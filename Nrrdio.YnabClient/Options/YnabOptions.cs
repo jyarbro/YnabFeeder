@@ -1,4 +1,4 @@
-﻿namespace YnabFeeder.Common {
+﻿namespace Nrrdio.YnabClient.Options {
     public class YnabOptions {
         // Get this from YNAB's site
         public string AccessToken { get; set; }

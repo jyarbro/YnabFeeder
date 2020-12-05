@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using YnabFeeder.Common.Models;
 
-namespace YnabFeeder.Common {
+namespace Nrrdio.YnabClient.Options {
     public class FintsOptions {
         public string FilePath { get; set; }
-        public List<Bank> Banks { get; set; }
+        public List<BankOptions> Banks { get; set; }
     }
 }

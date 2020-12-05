@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YnabFeeder", "YnabFeeder\YnabFeeder.csproj", "{59C06B45-3F23-4806-9019-51EBCFB83057}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{CD6016CD-E410-4553-A25F-6D3A4C4BCD59}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git Files", "Git Files", "{BC1E70DF-0B28-40E2-90FF-8C62B607FE1B}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
@@ -16,11 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git Files", "Git Files", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libfintx", "libfintx\src\libfintx\libfintx.csproj", "{276F2128-9C39-4023-B688-C22C365129BA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{2EE07C4B-98F6-496C-BFDB-C58D8C351D92}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YNAB.SDK", "ynab-sdk\YNAB.SDK\YNAB.SDK.csproj", "{48DE35D7-5615-4B16-97CA-68E900673999}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nrrdio.Utilities", "Nrrdio.Utilities\Nrrdio.Utilities\Nrrdio.Utilities.csproj", "{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nrrdio.YnabClient", "Nrrdio.YnabClient\Nrrdio.YnabClient.csproj", "{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nrrdio.YnabConsole", "Nrrdio.YnabConsole\Nrrdio.YnabConsole.csproj", "{043B252C-A21C-4495-B94A-C68594CABC23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,22 +26,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{59C06B45-3F23-4806-9019-51EBCFB83057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{59C06B45-3F23-4806-9019-51EBCFB83057}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{59C06B45-3F23-4806-9019-51EBCFB83057}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{59C06B45-3F23-4806-9019-51EBCFB83057}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD6016CD-E410-4553-A25F-6D3A4C4BCD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD6016CD-E410-4553-A25F-6D3A4C4BCD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD6016CD-E410-4553-A25F-6D3A4C4BCD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD6016CD-E410-4553-A25F-6D3A4C4BCD59}.Release|Any CPU.Build.0 = Release|Any CPU
 		{276F2128-9C39-4023-B688-C22C365129BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{276F2128-9C39-4023-B688-C22C365129BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{276F2128-9C39-4023-B688-C22C365129BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{276F2128-9C39-4023-B688-C22C365129BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2EE07C4B-98F6-496C-BFDB-C58D8C351D92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2EE07C4B-98F6-496C-BFDB-C58D8C351D92}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2EE07C4B-98F6-496C-BFDB-C58D8C351D92}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2EE07C4B-98F6-496C-BFDB-C58D8C351D92}.Release|Any CPU.Build.0 = Release|Any CPU
 		{48DE35D7-5615-4B16-97CA-68E900673999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{48DE35D7-5615-4B16-97CA-68E900673999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48DE35D7-5615-4B16-97CA-68E900673999}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,6 +38,14 @@ Global
 		{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FB0784F-C51C-4777-B66C-D8ED3A888B8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05A57A66-13C9-49C3-A0AC-4DABDF68B26F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{043B252C-A21C-4495-B94A-C68594CABC23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{043B252C-A21C-4495-B94A-C68594CABC23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{043B252C-A21C-4495-B94A-C68594CABC23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{043B252C-A21C-4495-B94A-C68594CABC23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

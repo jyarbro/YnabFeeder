@@ -1,15 +1,13 @@
 ﻿using libfintx.Swift;
 using Microsoft.Extensions.Options;
 using Nrrdio.Utilities;
+using Nrrdio.YnabClient.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YNAB.SDK;
-using YNAB.SDK.Api;
-using YNAB.SDK.Client;
 using YNAB.SDK.Model;
-using YnabFeeder.Common;
 
 namespace YnabFeeder {
     public class TestClient_ProcessTransactions {
@@ -40,7 +38,7 @@ namespace YnabFeeder {
         async Task ProcessTransactions() {
             var swiftStatements = JsonFiles.ReadFromJsonFile<List<SwiftStatement>>($"{FintsOptions.FilePath}\\transactions.json");
 
-            var accountId = new Guid(FintsOptions.Banks.First().Accounts.First().YnabAccountId);
+            var accountId = FintsOptions.Banks.First().Accounts.First().YnabAccountId;
             var account = Budget.Accounts.First(o => o.Id == accountId);
 
             var ynabTransactions = new List<SaveTransaction>();
