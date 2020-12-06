@@ -1,3 +1,6 @@
 [submodule "libfintx"]
 	path = libfintx
 	url = https://github.com/mrklintscher/libfintx.git
+[submodule "ynab-sdk-dotnetcore"]
+	path = ynab-sdk-dotnetcore
+	url = https://github.com/jaboc83/ynab-sdk-dotnetcore.git

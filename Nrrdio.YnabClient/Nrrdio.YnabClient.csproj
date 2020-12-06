@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\libfintx\src\libfintx\libfintx.csproj" />
-    <ProjectReference Include="..\ynab-sdk\YNAB.SDK\YNAB.SDK.csproj" />
+    <ProjectReference Include="..\ynab-sdk-dotnetcore\YNAB.SDK\YNAB.SDK.csproj" />
   </ItemGroup>
 
   <ItemGroup>
