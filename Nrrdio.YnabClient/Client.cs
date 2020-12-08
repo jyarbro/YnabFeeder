@@ -78,7 +78,7 @@ namespace Nrrdio.YnabClient {
 
                         FintsClient.ConnectionDetails.Account = fintsAccount.AccountNumber;
 
-                        var fintsTransactionsResult = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-2), DateTime.Today);
+                        var fintsTransactionsResult = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-10), DateTime.Today);
 
                         Console.WriteLine($"{nameof(FintsClient.Transactions)} messages:");
 
@@ -102,12 +102,18 @@ namespace Nrrdio.YnabClient {
 
                                 var importId = $"{importIdBase}:{occurrences}";
 
+                                var memo = swiftTransaction.SVWZ ?? string.Empty;
+
+                                if (memo.Length > 200) {
+                                    memo = memo.Substring(0, 200);
+                                }
+
                                 ynabTransactions.Add(new SaveTransaction {
                                     AccountId = accountOptions.YnabAccountId,
                                     Amount = milliunits,
                                     Date = swiftTransaction.ValueDate,
                                     PayeeName = swiftTransaction.PartnerName,
-                                    Memo = swiftTransaction.SVWZ,
+                                    Memo = memo,
                                     Cleared = SaveTransaction.ClearedEnum.Cleared,
                                     ImportId = importId
                                 });
