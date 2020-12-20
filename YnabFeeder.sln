@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libfintx", "libfintx\src\li
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YNAB.SDK", "ynab-sdk-dotnetcore\YNAB.SDK\YNAB.SDK.csproj", "{BA9E4D6C-3867-4F57-8A8E-A98BA3D1C4BE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nrrdio.Utilities", "Nrrdio.Utilities\Nrrdio.Utilities\Nrrdio.Utilities.csproj", "{67EED51C-CA25-4C16-8B88-63FEFB4D572B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{BA9E4D6C-3867-4F57-8A8E-A98BA3D1C4BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA9E4D6C-3867-4F57-8A8E-A98BA3D1C4BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA9E4D6C-3867-4F57-8A8E-A98BA3D1C4BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67EED51C-CA25-4C16-8B88-63FEFB4D572B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67EED51C-CA25-4C16-8B88-63FEFB4D572B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67EED51C-CA25-4C16-8B88-63FEFB4D572B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67EED51C-CA25-4C16-8B88-63FEFB4D572B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
