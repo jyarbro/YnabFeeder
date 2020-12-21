@@ -3,6 +3,7 @@ using App.Options;
 using App.Services;
 using libfintx;
 using libfintx.Data;
+using libfintx.Swift;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -77,107 +78,133 @@ public class AppHost : IHostedService {
     }
 
     public async Task StartAsync(CancellationToken cancellationToken) {
-        Budget = YnabApi.Budgets.GetBudgetById(YnabOptions.BudgetId).Data.Budget;
+        Logger.LogTrace($"{nameof(StartAsync)}({nameof(cancellationToken)})");
 
-        foreach (var bankOptions in FintsOptions.Banks) {
-            var fintsConnectionDetails = new ConnectionDetails {
-                Blz = bankOptions.Blz,
-                UserId = bankOptions.UserId,
-                Pin = bankOptions.Pin,
-                Url = bankOptions.Endpoint
-            };
+        try {
+            Budget = YnabApi.Budgets.GetBudgetById(YnabOptions.BudgetId).Data.Budget;
 
-            FintsClient = new FinTsClient(fintsConnectionDetails);
-            Dialog = new TANDialog((dialog) => {
-                Console.WriteLine("--------------------------------------");
-                Console.WriteLine($"{nameof(TANDialog)} messages:");
+            foreach (var bankOptions in FintsOptions.Banks) {
+                var fintsConnectionDetails = new ConnectionDetails {
+                    Blz = bankOptions.Blz,
+                    UserId = bankOptions.UserId,
+                    Pin = bankOptions.Pin,
+                    Url = bankOptions.Endpoint
+                };
 
-                foreach (var message in dialog.DialogResult.Messages) {
-                    Console.WriteLine($"{message.Code} {message.Message}");
+                FintsClient = new FinTsClient(fintsConnectionDetails);
+                Dialog = new TANDialog(dialogCallback);
+
+                List<AccountInformation> fintsAccounts = await loadFintsAccounts();
+
+                foreach (var fintsAccount in fintsAccounts) {
+                    var accountOptions = bankOptions.Accounts.FirstOrDefault(o => o.Iban == fintsAccount.AccountIban);
+
+                    if (accountOptions is null) {
+                        Logger.LogInformation($"Account not found with IBAN {fintsAccount.AccountIban}");
+                    }
+                    else {
+                        var swiftStatements = await loadSwiftStatements(fintsAccount);
+                        await sendToYnab(accountOptions.YnabAccountId, swiftStatements);
+                    }
                 }
+            }
+        }
+        catch (Exception e) {
+            Logger.LogError(e, $"{nameof(AppHost)} process failed with exception.");
+        }
 
-                return Task.Run(() => string.Empty);
-            });
+        Task<string> dialogCallback(TANDialog dialog) {
+            Logger.LogTrace($"{nameof(dialogCallback)}({nameof(dialog)})");
+            
+            var logMessage = $"{nameof(TANDialog)} messages:\n";
 
-            Console.WriteLine("--------------------------------------");
-            Console.WriteLine("Getting accounts");
+            foreach (var message in dialog.DialogResult.Messages) {
+                logMessage += $"{message.Code} {message.Message}";
+            }
+
+            Logger.LogInformation(logMessage);
+
+            return Task.Run(() => string.Empty);
+        }
+
+        async Task<List<AccountInformation>> loadFintsAccounts() {
+            Logger.LogTrace($"{nameof(loadFintsAccounts)}()");
 
             var fintsAccountsResult = await FintsClient.Accounts(Dialog);
 
-            Console.WriteLine($"{nameof(FintsClient.Accounts)} messages:");
+            var logMessage = $"{nameof(FintsClient.Accounts)} messages:";
 
             foreach (var message in fintsAccountsResult.Messages) {
-                Console.WriteLine($"{message.Code} {message.Message}");
+                logMessage += $"{message.Code} {message.Message}";
             }
 
-            var fintsAccounts = fintsAccountsResult.Data;
+            Logger.LogInformation(logMessage);
 
-            foreach (var fintsAccount in fintsAccounts) {
-                Console.WriteLine("--------------------------------------");
+            return fintsAccountsResult.Data;
+        }
 
-                var accountOptions = bankOptions.Accounts.FirstOrDefault(o => o.Iban == fintsAccount.AccountIban);
+        async Task<List<SwiftStatement>> loadSwiftStatements(AccountInformation fintsAccount) {
+            Logger.LogTrace($"{nameof(loadSwiftStatements)}({nameof(fintsAccount)}: {fintsAccount})");
 
-                if (accountOptions is null) {
-                    Console.WriteLine($"Account not found with IBAN {fintsAccount.AccountIban}");
+            FintsClient.ConnectionDetails.Account = fintsAccount.AccountNumber;
+
+            var fintsTransactionsResult = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-10), DateTime.Today);
+
+            var logMessage = $"{nameof(FintsClient.Transactions)} messages:\n";
+
+            foreach (var message in fintsTransactionsResult.Messages) {
+                logMessage += $"{message.Code} {message.Message}\n";
+            }
+
+            Logger.LogInformation(logMessage);
+
+            return fintsTransactionsResult.Data;
+        }
+
+        async Task sendToYnab(Guid ynabAccountId, List<SwiftStatement> swiftStatements) {
+            Logger.LogTrace($"{nameof(sendToYnab)}({nameof(ynabAccountId)}: {ynabAccountId}, {nameof(swiftStatements)}: {swiftStatements.Count})");
+            
+            var ynabTransactions = new List<SaveTransaction>();
+
+            var importIds = new List<string>();
+
+            foreach (var swiftStatement in swiftStatements) {
+                foreach (var swiftTransaction in swiftStatement.SwiftTransactions) {
+                    var milliunits = Convert.ToInt64(swiftTransaction.Amount * 1000);
+                    var importIdBase = $"NRRDIO:{milliunits}:{swiftTransaction.ValueDate:d}";
+
+                    importIds.Add(importIdBase);
+                    var occurrences = importIds.Count(o => o == importIdBase);
+
+                    var importId = $"{importIdBase}:{occurrences}";
+
+                    var memo = swiftTransaction.SVWZ ?? string.Empty;
+
+                    if (memo.Length > 200) {
+                        memo = memo.Substring(0, 200);
+                    }
+
+                    ynabTransactions.Add(new SaveTransaction {
+                        AccountId = ynabAccountId,
+                        Amount = milliunits,
+                        Date = swiftTransaction.ValueDate,
+                        PayeeName = swiftTransaction.PartnerName,
+                        Memo = memo,
+                        Cleared = SaveTransaction.ClearedEnum.Cleared,
+                        ImportId = importId
+                    });
                 }
-                else {
-                    Console.WriteLine($"Getting transactions for {fintsAccount.AccountIban}");
+            }
 
-                    FintsClient.ConnectionDetails.Account = fintsAccount.AccountNumber;
+            if (ynabTransactions.Any()) {
+                Logger.LogInformation($"Sending {ynabTransactions.Count} transactions to YNAB.");
 
-                    var fintsTransactionsResult = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-10), DateTime.Today);
+                var response = await YnabApi.Transactions.CreateTransactionAsync(Budget.Id.ToString(), new SaveTransactionsWrapper(transactions: ynabTransactions));
 
-                    Console.WriteLine($"{nameof(FintsClient.Transactions)} messages:");
-
-                    foreach (var message in fintsTransactionsResult.Messages) {
-                        Console.WriteLine($"{message.Code} {message.Message}");
-                    }
-
-                    var swiftStatements = fintsTransactionsResult.Data;
-
-                    var ynabTransactions = new List<SaveTransaction>();
-
-                    var importIds = new List<string>();
-
-                    foreach (var swiftStatement in swiftStatements) {
-                        foreach (var swiftTransaction in swiftStatement.SwiftTransactions) {
-                            var milliunits = Convert.ToInt64(swiftTransaction.Amount * 1000);
-                            var importIdBase = $"NRRDIO:{milliunits}:{swiftTransaction.ValueDate:d}";
-
-                            importIds.Add(importIdBase);
-                            var occurrences = importIds.Count(o => o == importIdBase);
-
-                            var importId = $"{importIdBase}:{occurrences}";
-
-                            var memo = swiftTransaction.SVWZ ?? string.Empty;
-
-                            if (memo.Length > 200) {
-                                memo = memo.Substring(0, 200);
-                            }
-
-                            ynabTransactions.Add(new SaveTransaction {
-                                AccountId = accountOptions.YnabAccountId,
-                                Amount = milliunits,
-                                Date = swiftTransaction.ValueDate,
-                                PayeeName = swiftTransaction.PartnerName,
-                                Memo = memo,
-                                Cleared = SaveTransaction.ClearedEnum.Cleared,
-                                ImportId = importId
-                            });
-                        }
-                    }
-
-                    if (ynabTransactions.Any()) {
-                        Console.WriteLine($"Sending {ynabTransactions.Count} transactions to YNAB.");
-
-                        var response = await YnabApi.Transactions.CreateTransactionAsync(Budget.Id.ToString(), new SaveTransactionsWrapper(transactions: ynabTransactions));
-
-                        Console.WriteLine($"{response.Data.DuplicateImportIds.Count} duplicates found on YNAB. {response.Data.TransactionIds.Count} added.");
-                    }
-                    else {
-                        Console.WriteLine("No transactions to send to YNAB.");
-                    }
-                }
+                Logger.LogWarning($"{response.Data.DuplicateImportIds.Count} duplicates found on YNAB. {response.Data.TransactionIds.Count} added.");
+            }
+            else {
+                Logger.LogInformation("No transactions to send to YNAB.");
             }
         }
     }
