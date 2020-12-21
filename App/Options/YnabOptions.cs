@@ -1,5 +1,7 @@
-﻿namespace Nrrdio.YnabClient.Options {
+﻿namespace App.Options {
     public class YnabOptions {
+        public const string Section = "ynab";
+       
         // Get this from YNAB's site
         public string AccessToken { get; set; }
 

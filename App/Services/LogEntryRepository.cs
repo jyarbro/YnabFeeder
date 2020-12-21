@@ -1,7 +1,7 @@
 ﻿using Nrrdio.Utilities.Loggers;
 using Nrrdio.Utilities.Loggers.Contracts;
 
-namespace Nrrdio.YnabClient.Services {
+namespace App.Services {
     class LogEntryRepository : ILogEntryRepository {
         DataContext Db { get; init; }
 

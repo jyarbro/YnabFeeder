@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Nrrdio.YnabClient.Options;
+using App.Options;
 using YNAB.SDK;
 
-namespace Nrrdio.YnabClient {
+namespace App {
     public static class AddYnabClientExtension {
         public static void AddYnabClient(this ServiceCollection services) {
             var configurationBuilder = new ConfigurationBuilder();
@@ -28,7 +28,7 @@ namespace Nrrdio.YnabClient {
                 return new API(ynabOptions.AccessToken);
             });
 
-            services.AddScoped<Client>();
+            services.AddScoped<AppHost>();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nrrdio.YnabClient.Options {
+namespace App.Options {
     public class BankOptions {
         public int Blz { get; set; }
         public string UserId { get; set; }

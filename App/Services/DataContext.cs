@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nrrdio.Utilities.Loggers;
 
-namespace Nrrdio.YnabClient {
+namespace App {
     public class DataContext : DbContext {
         public DbSet<LogEntry> LogEntries { get; set; }
 

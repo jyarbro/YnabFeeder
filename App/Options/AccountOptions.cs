@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nrrdio.YnabClient.Options {
+namespace App.Options {
     public class AccountOptions {
         public string Name { get; set; }
         public string Iban { get; set; }
