@@ -130,7 +130,7 @@ public class AppHost : IHostedService {
             var logMessage = $"{nameof(TANDialog)} messages:\n";
 
             foreach (var message in dialog.DialogResult.Messages) {
-                logMessage += $"{message.Code} {message.Message}";
+                logMessage += $"{message.Code} {message.Message}\n";
             }
 
             Logger.LogInformation(logMessage);
@@ -143,10 +143,10 @@ public class AppHost : IHostedService {
 
             var fintsAccountsResult = await FintsClient.Accounts(Dialog);
 
-            var logMessage = $"{nameof(FintsClient.Accounts)} messages:";
+            var logMessage = $"{nameof(FintsClient.Accounts)} messages:\n";
 
             foreach (var message in fintsAccountsResult.Messages) {
-                logMessage += $"{message.Code} {message.Message}";
+                logMessage += $"{message.Code} {message.Message}\n";
             }
 
             Logger.LogInformation(logMessage);
