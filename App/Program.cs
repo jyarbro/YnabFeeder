@@ -99,6 +99,8 @@ public class AppHost : IHostedService {
                     Url = bankOptions.Endpoint
                 };
 
+                Logger.LogWarning($"Opening FinTS connection.");
+
                 FintsClient = new FinTsClient(fintsConnectionDetails);
                 Dialog = new TANDialog(dialogCallback);
 
@@ -155,7 +157,7 @@ public class AppHost : IHostedService {
         }
 
         async Task<List<SwiftStatement>> loadSwiftStatements(AccountInformation fintsAccount) {
-            Logger.LogTrace($"{nameof(loadSwiftStatements)}({nameof(fintsAccount)}: {fintsAccount})");
+            Logger.LogTrace($"{nameof(loadSwiftStatements)}({nameof(fintsAccount)}: {fintsAccount.AccountIban})");
 
             FintsClient.ConnectionDetails.Account = fintsAccount.AccountNumber;
 
