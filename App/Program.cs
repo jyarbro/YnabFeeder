@@ -22,40 +22,46 @@ using YNAB.SDK.Model;
 
 await Host
     .CreateDefaultBuilder(args)
-    .ConfigureServices((hostContext, services) => {
+    .ConfigureHostConfiguration((config) => {
+        config.AddEnvironmentVariables("DOTNET_");
+    })
+    .ConfigureAppConfiguration((host, config) => {
+        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+        config.AddJsonFile($"appsettings.{host.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+        config.AddEnvironmentVariables();
+
+        if (args is not { Length: >0 }) {
+            config.AddCommandLine(args);
+        }
+    })
+    .ConfigureServices((host, services) => {
         services.AddHostedService<AppHost>();
 
-        var configurationBuilder = new ConfigurationBuilder();
-
-        var configuration = configurationBuilder
-            .AddJsonFile("appsettings.json")
-            .Build();
-
         services.Configure<FintsOptions>((options) => {
-            configuration.GetSection(FintsOptions.Section).Bind(options);
+            host.Configuration.GetSection(FintsOptions.Section).Bind(options);
         });
 
         services.Configure<YnabOptions>((options) => {
-            configuration.GetSection(YnabOptions.Section).Bind(options);
+            host.Configuration.GetSection(YnabOptions.Section).Bind(options);
         });
 
-        services.AddScoped<IConfiguration>((services) => configuration);
-
-        services.AddScoped((services) => {
+        services.AddSingleton((services) => {
             var ynabOptions = services.GetService<IOptions<YnabOptions>>().Value;
             return new API(ynabOptions.AccessToken);
         });
 
-        services.AddDbContext<DataContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
-
+        services.AddSingleton<DataContext>();
         services.AddSingleton<ILogEntryRepository, LogEntryRepository>();
         services.AddSingleton<ILoggerProvider, DatabaseLoggerProvider>();
+        services.AddSingleton<ILoggerProvider, ColorConsoleLoggerProvider>();
         services.AddLogging();
     })
     .Build()
     .RunAsync();
 
 public class AppHost : IHostedService {
+    IHostApplicationLifetime AppLifetime { get; init; }
     ILogger<AppHost> Logger { get; init; }
     FintsOptions FintsOptions { get; init; }
     YnabOptions YnabOptions { get; init; }
@@ -66,11 +72,13 @@ public class AppHost : IHostedService {
     TANDialog Dialog { get; set; }
 
     public AppHost(
+        IHostApplicationLifetime appLifetime,
         ILogger<AppHost> logger,
         IOptions<FintsOptions> fintsOptions,
         IOptions<YnabOptions> ynabOptions,
         API api
     ) {
+        AppLifetime = appLifetime;
         Logger = logger;
         FintsOptions = fintsOptions.Value;
         YnabOptions = ynabOptions.Value;
@@ -112,10 +120,13 @@ public class AppHost : IHostedService {
         catch (Exception e) {
             Logger.LogError(e, $"{nameof(AppHost)} process failed with exception.");
         }
+        finally {
+            AppLifetime.StopApplication();
+        }
 
         Task<string> dialogCallback(TANDialog dialog) {
             Logger.LogTrace($"{nameof(dialogCallback)}({nameof(dialog)})");
-            
+
             var logMessage = $"{nameof(TANDialog)} messages:\n";
 
             foreach (var message in dialog.DialogResult.Messages) {
@@ -163,7 +174,7 @@ public class AppHost : IHostedService {
 
         async Task sendToYnab(Guid ynabAccountId, List<SwiftStatement> swiftStatements) {
             Logger.LogTrace($"{nameof(sendToYnab)}({nameof(ynabAccountId)}: {ynabAccountId}, {nameof(swiftStatements)}: {swiftStatements.Count})");
-            
+
             var ynabTransactions = new List<SaveTransaction>();
 
             var importIds = new List<string>();
