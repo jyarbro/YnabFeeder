@@ -157,7 +157,7 @@ public class AppHost : IHostedService {
         }
 
         async Task<List<SwiftStatement>> loadSwiftStatements(AccountInformation fintsAccount) {
-            Logger.LogTrace($"{nameof(loadSwiftStatements)}({nameof(fintsAccount)}: {fintsAccount.AccountIban})");
+            Logger.LogTrace($"{nameof(loadSwiftStatements)}({nameof(fintsAccount)}:\n{fintsAccount})");
 
             FintsClient.ConnectionDetails.Account = fintsAccount.AccountNumber;
 

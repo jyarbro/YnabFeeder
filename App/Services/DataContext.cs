@@ -4,7 +4,7 @@ using Nrrdio.Utilities.Loggers;
 
 namespace App {
     public class DataContext : DbContext {
-        public DbSet<LogEntry> LogEntries { get; set; }
+        public DbSet<LogEntry> YnabFeederLog { get; set; }
         readonly string connectionString;
 
         public DataContext(IConfiguration configuration) {
