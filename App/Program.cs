@@ -4,7 +4,6 @@ using App.Services;
 using libfintx;
 using libfintx.Data;
 using libfintx.Swift;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,7 +30,7 @@ await Host
 
         config.AddEnvironmentVariables();
 
-        if (args is not { Length: >0 }) {
+        if (args is not { Length: > 0 }) {
             config.AddCommandLine(args);
         }
     })
@@ -161,7 +160,7 @@ public class AppHost : IHostedService {
 
             FintsClient.ConnectionDetails.Account = fintsAccount.AccountNumber;
 
-            var fintsTransactionsResult = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-10), DateTime.Today);
+            var fintsTransactionsResult = await FintsClient.Transactions(Dialog, DateTime.Today.AddDays(-FintsOptions.DaysToRetrieve), DateTime.Today);
 
             var logMessage = $"{nameof(FintsClient.Transactions)} messages:\n";
 
